@@ -16,3 +16,4 @@ Dobierz parametry wykresu, aby zapewnić jego estetykę (tzn. gęstość izolini
 
 Dodatkowe źródła
 https://scipython.com/blog/visualizing-a-vector-field-with-matplotlib/
+https://compphys.go.ro/electric-field-lines/
