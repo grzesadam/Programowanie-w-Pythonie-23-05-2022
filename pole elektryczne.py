@@ -5,14 +5,15 @@ import random
 
 q = []
 # znak i liczba ładunków
-for i in range(10):
+i=0
+while i<10:
     znak = random.randint(-10, 10)
     if znak < 0:
         q.append(-1)
-    if znak > 0:
+        i+=1
+    elif znak > 0:
         q.append(1)
-    if znak == 0:
-        continue
+        i+=1
 print(q)
 
 axes = [10, 10, 10]
@@ -32,7 +33,7 @@ for j in range(len(q)):
     x = random.uniform(0, 10)
     y = random.uniform(0, 10)
     z = random.uniform(0, 10)
-    if #warunek !!!! == -1:
+    if q[j] == -1:
         ax.scatter(x,y,z,c='blue')
     else:
         ax.scatter(x,y,z,c='red')
