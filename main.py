@@ -1,4 +1,5 @@
 from math import atan2, sin, cos, sqrt
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -80,12 +81,26 @@ for charge in charges:
     elif charge.q < 0:
         cube[charge.x][charge.y][charge.z] = -1
 
-fig = plt.figure()
-ax = fig.add_subplot(projection='3d')
-charge: electric_charge
-for charge in charges:
-    for i in range(1000):
-        charge.update_pos(charges, 1)
-        ax.scatter(charge.x, charge.y, charge.z, c='black')
-    ax.scatter(charge.x, charge.y, charge.z, c=charge.color)
+# fig = plt.figure()
+# ax = fig.add_subplot(projection='3d')
+# charge: electric_charge
+# for charge in charges:
+#     for i in range(1000):
+#         charge.update_pos(charges, 1)
+#         ax.scatter(charge.x, charge.y, charge.z, c='black')
+#     ax.scatter(charge.x, charge.y, charge.z, c=charge.color)
+#     print(charge.x)
+# plt.show()
+
+
+xlist = np.linspace(0, 10, 100)
+ylist = np.linspace(0, 10, 100)
+X, Y = np.meshgrid(xlist, ylist)
+Z = Q1.k*Q1.q / ((X - Q1.x) ** 2 + (Y - Q1.y) ** 2)
+fig, ax = plt.subplots(1, 1)
+cp = ax.contourf(X, Y, Z)
+fig.colorbar(cp)  # Add a colorbar to a plot
+ax.set_title('Filled Contours Plot')
+# ax.set_xlabel('x (cm)')
+ax.set_ylabel('y (cm)')
 plt.show()
