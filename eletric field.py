@@ -10,6 +10,7 @@ z = 10
 n = 2
 k = 1 / (4 * constants.pi * constants.epsilon_0)
 zi = 5
+size=10
 
 
 # function to generate an electrical charge
@@ -48,39 +49,58 @@ def plot_3d(ox, oy, oz, ox1, oy1, oz1):
 plot_3d(ox, oy, oz, ox1, oy1, oz1)
 
 
-def mesh_plus(ox, oy, zi, oz):
-    xlist = np.linspace(0, 10, len(ox))
-    ylist = np.linspace(0, 10, len(ox))
-    print(xlist)
-    r1=np.subtract(xlist,ox)
-    r2=(ylist-oy)**2
-    r3 = (zi - oz) ** 2
-    print(r1)
+def mesh_plus(ox, oy, zi, oz,size):
+    xlist = np.linspace(0, 10, size)
+    ylist = np.linspace(0, 10,size )
 
 
-r1 = mesh_plus(ox, oy, zi, oz)
-r2 = mesh_plus(ox, oy, zi, oz)
-r3 = mesh_plus(ox, oy, zi, oz)
+    rx0= []
+    ry0= []
+    for i in range(size):
+        r1 = (xlist[i] - ox[0]) ** 2
+        r2 = (ylist[i] - oy[0]) ** 2
+        rx0 = np.append(rx0, r1)
+        ry0 = np.append(ry0, r2)
+
+    return rx0,ry0
+
+rx0,ry0= mesh_plus(ox, oy, zi, oz,size)
 
 
-def mesh_minus(ox1, oy1, zi, oz1):
-    x1list = np.linspace(0, 10, len(ox1))
-    y1list = np.linspace(0, 10, len(ox1))
-    r_min1 = (x1list - ox1) ** 2
-    r_min2 = (y1list - oy1) ** 2
-    r_min3 = (zi - oz1) ** 2
-    return r_min1,r_min2,r_min3
 
-r_min1 = mesh_minus(ox1, oy1, zi, oz1)
-r_min2 = mesh_minus(ox1, oy1, zi, oz1)
-r_min3 = mesh_minus(ox1, oy1, zi, oz1)
+def mesh_minus(ox1, oy1, zi, oz1,size):
+    x1list = np.linspace(0, 10, size)
+    y1list = np.linspace(0, 10, size)
+    rx=[]
+    ry=[]
+    for i in range(size):
+        r_min1=(x1list[i]-ox1[0])**2
+        r_min2=(y1list[i]-oy1[0])**2
+        rx=np.append(rx,r_min1)
+        ry = np.append(ry, r_min2)
 
 
-# def contour(r_min1, r_min2, r_min3, r1, r2, r3):
-#     # rx = np.array([r1, r_min1])
-#     # ry = np.array([r2, r_min2])
-#     # rz = np.array([r3, r_min3])
-#     # print(rx)
-#
-#
-# contour(r_min1, r_min2, r_min3, r1, r2, r3)
+    return rx,ry
+
+rx,ry = mesh_minus(ox1, oy1, zi, oz1,size)
+
+
+
+def contour(rx0,ry0,rx,ry,zi,k,q1):
+    rx9=np.concatenate((rx0,rx))
+    ry9=np.concatenate((ry0,ry))
+    rz=(zi-oz[0])**2
+    X,Y=np.meshgrid(rx9,ry9)
+    Z=k*q1[0]/((X+Y+rz)**0.5)
+    fig, ax = plt.subplots(1, 1)
+    cp = ax.contourf(X, Y, Z)
+    fig.colorbar(cp)  # Add a colorbar to a plot
+    ax.set_title('Filled Contours Plot')
+    # ax.set_xlabel('x (cm)')
+    ax.set_ylabel('y (cm)')
+    plt.show()
+
+
+contour(rx0, ry0, rx, ry, zi,k,q1)
+
+
