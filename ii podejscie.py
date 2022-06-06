@@ -69,20 +69,12 @@ def mesh(ox, oy, zi, oz,size):
 rx,ry,rz= mesh(ox, oy, zi, oz,size)
 
 def contour(rx,ry,rz,k,q,n):
-    V=[]
-    for b in q:
-        V1=k*b/((rx+ry+rz[0])**0.5)
-        V=np.append(V,V1)
-    B = V[:len(V) // n]
-    print(B)
-
     X,Y=np.meshgrid(rx,ry)
-    # Z=k*q[0]/((X+Y+rz[0])**0.5)
-    # fig, ax = plt.subplots(1, 1)
-    # cp = ax.contourf(X, Y, Z)
-    # fig.colorbar(cp)  # Add a colorbar to a plot
-    #
-    # plt.show()
+    Z=k*q[0]/((X+Y+rz[0])**0.5)
+    fig, ax = plt.subplots(1, 1)
+    cp = ax.contourf(X, Y, Z)
+    fig.colorbar(cp)  # Add a colorbar to a plot
+    plt.show()
 
 
 contour(rx, ry,rz,k,q,n)
