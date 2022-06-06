@@ -7,7 +7,7 @@ from scipy import constants
 x = 10
 y = 10
 z = 10
-n = 2
+n = 1
 k = 1 / (4 * constants.pi * constants.epsilon_0)
 zi = 5
 size=10
@@ -70,7 +70,8 @@ rx,ry,rz= mesh(ox, oy, zi, oz,size)
 
 def contour(rx,ry,rz,k,q,n):
     X,Y=np.meshgrid(rx,ry)
-    Z=k*q[0]/((X+Y+rz[0])**0.5)
+    for i, j in zip(q,rz):
+        Z=k*i/((X+Y+j)**0.5)
     fig, ax = plt.subplots(1, 1)
     cp = ax.contourf(X, Y, Z)
     fig.colorbar(cp)  # Add a colorbar to a plot
