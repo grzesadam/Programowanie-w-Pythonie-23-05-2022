@@ -7,10 +7,11 @@ from scipy import constants
 x = 10
 y = 10
 z = 10
-n = 1
+n = 2
 k = 1 / (4 * constants.pi * constants.epsilon_0)
 zi = 5
-size=10
+size=100
+
 # function to generate an electrical charge
 def electric_charge(n):
     ox = np.random.uniform(0, x, n)
@@ -47,35 +48,41 @@ plot_3d(ox, oy, oz)
 
 def mesh(ox, oy, zi, oz,size):
     xlist = np.linspace(0, 10, size)
-    ylist = np.linspace(0, 10,size )
+    ylist = np.linspace(0, 10,size)
 
 
-    rx= []
-    ry= []
-    rz=[]
-    for i in range(size):
-        for b,c in zip(ox,oy):
-            r1 = (xlist[i] - b) ** 2
-            r2 = (ylist[i] - c) ** 2
-            rx = np.append(rx, r1)
-            ry = np.append(ry, r2)
-    for s in oz:
-        r3=(zi-s)**2
-        rz=np.append(rz,r3)
-    print(rx)
-    return rx,ry,rz
-
-
-rx,ry,rz= mesh(ox, oy, zi, oz,size)
-
-def contour(rx,ry,rz,k,q,n):
-    X,Y=np.meshgrid(rx,ry)
-    for i, j in zip(q,rz):
-        Z=k*i/((X+Y+j)**0.5)
+    X, Y = np.meshgrid(xlist, ylist)
+    i = [1, 1, 1]
+    j = [9, 1, 1]
+    for c in enumerate(q):
+        Z = k*c/((-X)**2+(oy-Y)**2+(oz-zi)**2)**0.5
+    Z1=sum(Z)
     fig, ax = plt.subplots(1, 1)
-    cp = ax.contourf(X, Y, Z)
+    cp = ax.contourf(X, Y, Z1)
     fig.colorbar(cp)  # Add a colorbar to a plot
+    ax.set_title('Potencial')
+
     plt.show()
 
 
-contour(rx, ry,rz,k,q,n)
+
+mesh(ox, oy, zi, oz,size)
+
+
+
+def lines_field(ox,oy,oz,q):
+    ax = plt.figure().add_subplot(projection='3d')
+
+    # Make the grid
+    x, y, z = np.meshgrid(np.arange(0, 10, 1),
+                          np.arange(0, 10, 1),
+                          np.arange(0, 10, 1))
+
+    # Make the direction data for the arrows
+    u = k*q[0]/x**2
+    v = k*q[0]/y**2
+    w = k*q[0]/z**2
+    ax.quiver(x, y, z, u, v, w, normalize=True)
+
+    plt.show()
+lines_field(ox,oy,oz,q)
