@@ -44,7 +44,7 @@ class electric_charge:
         return k * self.q / r
 
     def length_of_vector(self, x, y, z):
-        E = k * self.q/self.distance_from_point(x, y, z)
+        E = k * self.q/self.distance_from_point(x, y, z) ** 2
 
 
     # def attraction(self, other):
