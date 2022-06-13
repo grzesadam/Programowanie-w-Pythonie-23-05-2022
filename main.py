@@ -1,27 +1,25 @@
-from math import atan2, sin, cos, sqrt
+
+from random import randint, uniform
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import cm
 
 WIDTH = 10
 ROW = 10
 COL = 10
+epsilon0 = 8.8541878128e-12
+k = 1 / 4 / np.pi / epsilon0
 
 cube = np.zeros((ROW, COL, WIDTH))
 
 
 class electric_charge:
-    k = 8.9 * 10 ** 9
-
-    def __init__(self, x, y, z, q, mass):
+    def __init__(self, x, y, z, q):
         self.x = x
         self.y = y
         self.z = z
         self.q = q
-        self.mass = mass
-        self.orbit_x = [self.x]
-        self.orbit_y = [self.y]
-        self.orbit_z = [self.z]
         self.vel_x = 0
         self.vel_y = 0
         self.vel_z = 0
@@ -30,56 +28,44 @@ class electric_charge:
         else:
             self.color = 'red'
 
-    def attraction(self, other):
+    def distance(self, other):
         other_x, other_y, other_z = other.x, other.y, other.z
-        distance_x = other_x - self.x
-        distance_y = other_y - self.y
-        distance_z = other_z - self.z
-        distance = sqrt(distance_x ** 2 + distance_y ** 2 + distance_z ** 2)
-        force = self.k * self.q * other.q / distance ** 2
-        theta_xy = atan2(distance_x, distance_y)
-        theta_xz = atan2(distance_x, distance_z)
-        force_x = force * sin(theta_xy)
-        force_y = force * cos(theta_xy)
-        force_z = force * cos(theta_xz)
-        return force_x, force_y, force_z
+        return np.sqrt((other_x - self.x) ** 2 + (other_y - self.y) ** 2 + (other_z - self.z) ** 2)
 
-    def update_pos(self, charges, N):
-        for i in range(N):
-            for charge in charges:
-                total_fx = 0
-                total_fy = 0
-                total_fz = 0
-                if self == charge:
-                    continue
+    def distance_from_point(self, x, y, z):
+        return np.sqrt((x - self.x) ** 2 + (y - self.y) ** 2 + (z - self.z) ** 2)
 
-                fx, fy, fz = self.attraction(charge)
-                total_fx += fx
-                total_fy += fy
-                total_fz += fz
+    def calculate_potential(self, charge):
+        r = self.distance(charge)
+        return k * self.q / r
 
-                self.vel_x += (fx * 0.1) / self.mass
-                self.vel_x += (fy * 0.1) / self.mass
-                self.vel_x += (fz * 0.1) / self.mass
+    def calculate_potential_from_point(self, x, y, z):
+        r = self.distance_from_point(x, y, z)
+        return k * self.q / r
 
-                self.x += self.vel_x * 0.1
-                self.y += self.vel_y * 0.1
-                self.z += self.vel_z * 0.1
-                self.orbit_x.append(self.orbit_x)
-                self.orbit_y.append(self.orbit_y)
-                self.orbit_z.append(self.orbit_z)
+    def length_of_vector(self, x, y, z):
+        E = k * self.q/self.distance_from_point(x, y, z)
 
 
-Q1 = electric_charge(1, 1, 1, 1, 1000)
-Q2 = electric_charge(9, 9, 9, -1, 1000)
-alfa = electric_charge(0, 0, 0, 1, 1)
-alfa.vel_x = 10
-charges = [Q1, Q2, alfa]
-for charge in charges:
-    if charge.q > 0:
-        cube[charge.x][charge.y][charge.z] = 1
-    elif charge.q < 0:
-        cube[charge.x][charge.y][charge.z] = -1
+    # def attraction(self, other):
+    #     force = k * self.q * other.q / other.distance ** 2
+    #     theta_xy = atan2(distance_x, distance_y)
+    #     theta_xz = atan2(distance_x, distance_z)
+    #     force_x = force * sin(theta_xy)
+    #     force_y = force * cos(theta_xy)
+    #     force_z = force * cos(theta_xz)
+    #     return force_x, force_y, force_z
+
+
+n = randint(2, 5)
+charges = []
+for i in range(n):
+    charges.append(electric_charge(randint(0, 10), randint(0, 10), randint(0, 10), uniform(1e-6, 5e-6)))
+# for charge in charges:
+#     if charge.q > 0:
+#         cube[charge.x][charge.y][charge.z] = 1
+#     elif charge.q < 0:
+#         cube[charge.x][charge.y][charge.z] = -1
 
 # fig = plt.figure()
 # ax = fig.add_subplot(projection='3d')
@@ -93,14 +79,23 @@ for charge in charges:
 # plt.show()
 
 
-xlist = np.linspace(0, 10, 100)
-ylist = np.linspace(0, 10, 100)
-X, Y = np.meshgrid(xlist, ylist)
-Z = Q1.k*Q1.q / ((X - Q1.x) ** 2 + (Y - Q1.y) ** 2)
+x_list = np.linspace(0, 10, 100)
+y_list = np.linspace(0, 10, 100)
+
+X, Y = np.meshgrid(x_list, y_list)
+Z = charges[0].calculate_potential_from_point(X, Y, 0)
+for charge in charges[1:]:
+    Z += charge.calculate_potential_from_point(X, Y, 0)
 fig, ax = plt.subplots(1, 1)
-cp = ax.contourf(X, Y, Z)
+ax.set_aspect('equal', 'box')
+levels = np.linspace(Z.min(), Z.max(), 10)
+cp = ax.contourf(X, Y, Z, levels=levels, cmap=cm.autumn)
 fig.colorbar(cp)  # Add a colorbar to a plot
-ax.set_title('Filled Contours Plot')
-# ax.set_xlabel('x (cm)')
+ax.set_title('Potential')
+ax.set_xlabel('x (cm)')
 ax.set_ylabel('y (cm)')
 plt.show()
+
+print(f'number of charges:{n}')
+for charge in charges:
+    print(f'x:{charge.x}, y:{charge.y}, z:{charge.y}')
