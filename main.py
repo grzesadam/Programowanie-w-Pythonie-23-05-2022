@@ -1,4 +1,5 @@
 import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from dataclasses import dataclass, field
@@ -22,12 +23,6 @@ class Point:
     y: float
     z: float
 
-
-# class Point1:
-#     def __init__(self, x:float, y:float, z:float):
-#         self.x = x
-#         self.y = y
-#         self.z = z
 
 @dataclass
 class Vector:
@@ -142,7 +137,7 @@ class Charge:
             return direction * k * self.value / r ** 2
 
 
-n = randint(5, 20)
+n = randint(3, 7)
 Q = []
 for _ in range(n):
     Q.append(Charge(choice([-1, 1]) * uniform(1e-6, 5e-6), Point(uniform(0.5, 10), uniform(0.5, 10), uniform(0.5, 10))))
@@ -152,14 +147,32 @@ y = np.linspace(0, 10, 100, endpoint=True)
 
 X, Y = np.meshgrid(x, y)
 
-Z = Q[0].potential_xyz(X, Y, 0)
-for q in Q[1:]:
-    Z += q.potential_xyz(X, Y, 0)
+fig = plt.figure(figsize=(6, 6))
+ax = fig.gca(projection='3d')
+# ax.set_aspect('equal', 'box')
 
-fig, ax = plt.subplots(constrained_layout=True, figsize=(6, 6))
-ax.set_aspect('equal', 'box')
-levels = np.linspace(Z.min(), Z.max(), 20)
-cp = ax.contourf(X, Y, Z, levels=levels, cmap=cm.coolwarm)
+z_list = np.linspace(0, 10, 2, endpoint=True)
+Z = []
+for z in z_list:
+    Z.append(Q[0].potential_xyz(X, Y, z))
+    for q in Q[1:]:
+        Z[-1] += q.potential_xyz(X, Y, z)
+    
+levels = np.linspace(np.min(Z), np.max(Z), 20)
+for z, Z1 in zip(z_list, Z):
+    cp = ax.contourf(X, Y, Z1, levels=levels, zdir='z', offset=z, cmap=cm.coolwarm, alpha=0.8, antialiased=True)
+
 cbar = fig.colorbar(cp)
 cbar.ax.set_ylabel('electric potential')
+
+for q in Q:
+    if q.value < 0:
+        color = 'blue'
+    else:
+        color = 'red'
+    ax.scatter(q.location.x, q.location.y, q.location.z, color=color, alpha=1)
+    
+ax.set_xlim3d(0, 10)
+ax.set_ylim3d(0, 10)
+ax.set_zlim3d(0, 10)
 plt.show()
