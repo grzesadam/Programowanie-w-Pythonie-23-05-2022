@@ -118,11 +118,11 @@ def single_vector( n, numbers_point, ox, oy, oz, q,k):
         wersor2 = ry / r
         wersor3 = rz / r
 
-    for j in q:
-        e =+ k * j / r ** 2
-        ex =+ e * wersor1
-        ey =+ e * wersor2
-        ez =+ e * wersor3
+        for j in range(n):
+            e =+ k * q[j] / r ** 2
+            ex =+ e * wersor1
+            ey =+ e * wersor2
+            ez =+ e * wersor3
 
     ax.quiver(px, py, pz, ex, ey, ez, normalize=True)
     ax.set_title('Vectors')
