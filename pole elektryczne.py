@@ -77,7 +77,7 @@ ax[0] = fig.add_subplot(1, 2, 1, projection="3d")
 ax[0].scatter(x_ujemne, y_ujemne, z_ujemne, color="blue")
 ax[0].scatter(x_dodatnie, y_dodatnie, z_dodatnie, color="red")
 ax[0].set_title("Rozmieszczenie ładunków")
-plt.contourf(X, Y,Z, levels=levels,cmap=plt.get_cmap('rainbow'))
+# plt.contourf(X, Y,Z, levels=levels,cmap=plt.get_cmap('rainbow'))
 
 
 plt.show()
