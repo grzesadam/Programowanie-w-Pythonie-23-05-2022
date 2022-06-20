@@ -72,34 +72,37 @@ def mesh(ox, oy, zi, oz, size):
 mesh(ox, oy, zi, oz, size)
 
 
-# def lines_field(ox, oy, oz, q):
-#     ax = plt.figure().add_subplot(projection='3d')
-#
-#     # Make the grid
-#     x, y, z = np.meshgrid(np.arange(0, 10, 1),
-#                           np.arange(0, 10, 1),
-#                           np.arange(0, 10, 1))
-#     for i in range(n):
-#         rx=x-ox[i]
-#         ry=y-oy[i]
-#         rz=z-oz[i]
-#         r=(rx**2+ry**2+rz**2)**0.5
-#         wersor1=rx/r
-#         wersor2=ry/r
-#         wersor3=rz/r
-#         e=k*q[i]/r**2
-#         ex=e*wersor1
-#         ey=e*wersor2
-#         ez=e*wersor3
-#         ax.quiver(x, y, z, ex, ey, ez, normalize=True)
-#         ax.set_title('Vectors')
-#         ax.set_xlim3d(0,10)
-#         ax.set_ylim3d(0,10)
-#         ax.set_zlim3d(0,10)
-#         plt.show()
-#
-#
-# lines_field(ox, oy, oz, q)
+def lines_field(ox, oy, oz, q):
+    ax = plt.figure().add_subplot(projection='3d')
+
+     # Make the grid
+    x, y, z = np.meshgrid(np.arange(0, 10, 1),
+                           np.arange(0, 10, 1),
+                           np.arange(0, 10, 1))
+    rx = [x - i for i in ox]
+    ry = [y - i for i in oy]
+    rz = [z - i for i in oz]
+
+    r = [(rx[i] ** 2 + ry[i] ** 2 + rz[i] ** 2) ** 0.5 for i in range(n)]
+
+    wersor1 = [rx[i] / r[i] for i in range(n)]
+    wersor2 = [ry[i] / r[i] for i in range(n)]
+    wersor3 = [rz[i] / r[i] for i in range(n)]
+    e = [k * q[j] / r[j] ** 2 for j in range(n)]
+    ex  = [e[i] * wersor1[i] for i in range(n)]
+    ey = [e[i] * wersor2[i] for i in range(n)]
+    ez = [e[i] * wersor3[i] for i in range(n)]
+
+    arx=[sum(x) for x in zip(*ex)]
+    ary = [sum(x) for x in zip(*ey)]
+    arz = [sum(x) for x in zip(*ez)]
+    ax.quiver(x, y, z, arx, ary, arz, normalize=True)
+    ax.set_title('Vectors')
+    ax.set_xlim3d(0, 10)
+    ax.set_ylim3d(0, 10)
+    ax.set_zlim3d(0, 10)
+    plt.show()
+lines_field(ox, oy, oz, q)
 
 
 def single_vector( n, numbers_point, ox, oy, oz, q,k):
@@ -109,22 +112,28 @@ def single_vector( n, numbers_point, ox, oy, oz, q,k):
     py = np.random.uniform(0, y, numbers_point)
     pz = np.random.uniform(0, z, numbers_point)
 
-    for i in range(len(ox)):
-        rx = px - ox[i]
-        ry = py - oy[i]
-        rz = pz - oz[i]
-        r = (rx ** 2 + ry ** 2 + rz ** 2) ** 0.5
-        wersor1 = rx / r
-        wersor2 = ry / r
-        wersor3 = rz / r
+    rx = [px - i for i in ox]
+    ry = [py - i for i in oy]
+    rz = [pz - i for i in oz]
 
-        for j in range(n):
-            e =+ k * q[j] / r ** 2
-            ex =+ e * wersor1
-            ey =+ e * wersor2
-            ez =+ e * wersor3
+    r = [(rx[i] ** 2 + ry[i] ** 2 + rz[i] ** 2) ** 0.5 for i in range(n)]
 
-    ax.quiver(px, py, pz, ex, ey, ez, normalize=True)
+    wersor1 = [rx[i] / r[i] for i in range(n)]
+    wersor2 = [ry[i] / r[i] for i in range(n)]
+    wersor3 = [rz[i] / r[i] for i in range(n)]
+    e = [k * q[j] / r[j] ** 2 for j in range(n)]
+    ex  = [e[i] * wersor1[i] for i in range(n)]
+    ey = [e[i] * wersor2[i] for i in range(n)]
+    ez = [e[i] * wersor3[i] for i in range(n)]
+
+    arx=[sum(x) for x in zip(*ex)]
+    ary = [sum(x) for x in zip(*ey)]
+    arz = [sum(x) for x in zip(*ez)]
+
+
+
+
+    ax.quiver(px, py, pz, arx, ary, arz, normalize=True)
     ax.set_title('Vectors')
     ax.set_xlim3d(0, 10)
     ax.set_ylim3d(0, 10)
@@ -137,33 +146,31 @@ def single_vector( n, numbers_point, ox, oy, oz, q,k):
 
 single_vector( n, numbers_point, ox, oy, oz, q,k)
 
-# def alpha_particle(v,alfa,k,q,ox,oy,oz,m):
-#     ax = plt.figure().add_subplot(projection='3d')
-#     centre_of_the_wall1=np.array((5,5,0))
+def alpha_particle(v,alfa,k,q,ox,oy,oz,m):
+    ax = plt.figure().add_subplot(projection='3d')
+    cx=5
+    cy=5
+    cz=0
 # #     centre_of_the_wall2 = np.array((0, 5, 5))
-# #     centre_of_the_wall3 = np.array((5, 0, 5))
-# #     centre_of_the_wall=np.random.choice(centre_of_the_wall1,centre_of_the_wall2,centre_of_the_wall3)
-#
-#     rx=centre_of_the_wall1[0]-ox
-#     ry=centre_of_the_wall1[1]-oy
-#     rz=centre_of_the_wall1[2]-oz
-#     r=(rx**2+ry**2+rz**2)**0.5
-#     wersor1=rx/r
-#     wersor2=ry/r
-#     wersor3=rz/r
-#     for i in q:
-#         a=k*i*alfa/(m*r**2)
-#         ax=a*wersor1
-#         ay=a*wersor2
-#         az=a*wersor3
-#     ax.quiver(centre_of_the_wall1[0], centre_of_the_wall1[1], centre_of_the_wall1[2], ax, ay, az, normalize=True)
-#     ax.set_title('Vectors')
-#     ax.set_xlim3d(0, 10)
-#     ax.set_ylim3d(0, 10)
-#     ax.set_zlim3d(0, 10)
-#     plt.show()
-#
-#
-#
-#
-# alpha_particle(v, alfa,k,q,ox,oy,oz,m)
+# #     centre_of_the_wall3 = np.array((5, 0, 5)# #     centre_of_the_wall=np.random.choice(centre_of_the_wall1,centre_of_the_wall2,centre_of_the_wall3)
+
+    rx=cx-ox
+    ry=cy-oy
+    rz=cz-oz
+    r=(rx**2+ry**2+rz**2)**0.5
+    wersor1=rx/r
+    wersor2=ry/r
+    wersor3=rz/r
+
+    for i in q:
+        a=k*i*alfa/(m*r**2)
+    ax=a*wersor1
+    ay=a*wersor2
+    az=a*wersor3
+    ax.quiver(cx, cy, cz, ax, ay, az)
+    ax.set_title('Vectors')
+    ax.set_xlim3d(0, 10)
+    ax.set_ylim3d(0, 10)
+    ax.set_zlim3d(0, 10)
+    plt.show()
+alpha_particle(v, alfa,k,q,ox,oy,oz,m)
