@@ -1,6 +1,5 @@
 
 from random import randint, uniform
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
@@ -60,42 +59,58 @@ class electric_charge:
 n = randint(2, 5)
 charges = []
 for i in range(n):
-    charges.append(electric_charge(randint(0, 10), randint(0, 10), randint(0, 10), uniform(1e-6, 5e-6)))
+    charges.append(electric_charge(randint(0, 10), randint(0, 10), randint(0, 10), uniform(-1e-6, 5e-6)))
 # for charge in charges:
 #     if charge.q > 0:
 #         cube[charge.x][charge.y][charge.z] = 1
 #     elif charge.q < 0:
 #         cube[charge.x][charge.y][charge.z] = -1
 
-# fig = plt.figure()
-# ax = fig.add_subplot(projection='3d')
-# charge: electric_charge
-# for charge in charges:
-#     for i in range(1000):
-#         charge.update_pos(charges, 1)
-#         ax.scatter(charge.x, charge.y, charge.z, c='black')
-#     ax.scatter(charge.x, charge.y, charge.z, c=charge.color)
-#     print(charge.x)
-# plt.show()
+fig = plt.figure()
+ax = fig.gca(projection='3d')
 
+charge: electric_charge
 
-x_list = np.linspace(0, 10, 100)
-y_list = np.linspace(0, 10, 100)
+x = np.linspace(0, 10, 100)
+X, Y = np.meshgrid(x, x)
 
-X, Y = np.meshgrid(x_list, y_list)
+z_list = np.linspace(0, 10, 2, endpoint=True)
+Z = []
+for z in z_list:
+    Z.append(charges[0].calculate_potential_from_point(X, Y, z))
+    for q in charges[1:]:
+        Z[-1] += q.calculate_potential_from_point(X, Y, z)
+
+levels = np.linspace(np.min(Z), np.max(Z), 20)
+for z, Z1 in zip(z_list, Z):
+    cp = ax.contourf(X, Y, Z1, levels=levels, zdir='z', offset=z, cmap=cm.coolwarm, alpha=0.8, antialiased=True)
+
+for charge in charges:
+    ax.scatter(charge.x, charge.y, charge.z, c=charge.color)
+
+ax.set_title('Potential in 3D(V)')
+ax.set_xlabel('x(cm)')
+ax.set_ylabel('y(cm)')
+ax.set_zlabel('z(cm)')
+ax.set_xlim3d(0, 10)
+ax.set_ylim3d(0, 10)
+ax.set_zlim3d(0, 10)
+
+X, Y = np.meshgrid(x, x)
 Z = charges[0].calculate_potential_from_point(X, Y, 0)
-for charge in charges[1:]:
+for charge in charges[:1]:
     Z += charge.calculate_potential_from_point(X, Y, 0)
 fig, ax = plt.subplots(1, 1)
 ax.set_aspect('equal', 'box')
 levels = np.linspace(Z.min(), Z.max(), 10)
 cp = ax.contourf(X, Y, Z, levels=levels, cmap=cm.autumn)
-fig.colorbar(cp)  # Add a colorbar to a plot
-ax.set_title('Potential')
+fig.colorbar(cp)
+ax.set_title('Potential at level 0')
 ax.set_xlabel('x (cm)')
 ax.set_ylabel('y (cm)')
+
 plt.show()
 
 print(f'number of charges:{n}')
 for charge in charges:
-    print(f'x:{charge.x}, y:{charge.y}, z:{charge.y}')
+    print(f'x:{charge.x}, y:{charge.y}, z:{charge.y}, color:{charge.color}')
